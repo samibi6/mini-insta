@@ -28,7 +28,9 @@
                     </a>
                 </div>
                 <div class="flex items-center space-x-4 justify-end">
-                    <a class="font-bold hover:text-emerald-600 transition" href="/">Posts</a>
+                    <a class="font-bold hover:text-emerald-600 transition" href="{{ route('posts.index') }}">Posts</a>
+                    <a class="font-bold hover:text-emerald-600 transition" href="/login">Login</a>
+                    <a class="font-bold hover:text-emerald-600 transition" href="/register">Sign Up</a>
                 </div>
             </nav>
 

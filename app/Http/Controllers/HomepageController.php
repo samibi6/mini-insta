@@ -9,7 +9,7 @@ class HomepageController extends Controller
 {
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::paginate(12);
 
         return view('homepage.index', [
             'posts' => $posts,
