@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostStoreRequest;
+use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,10 +14,18 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::orderByDesc('updated_at')
-            ->paginate(10);
+        $posts =
+            Post::where('published_at', '<', now())
+            // ->where('body', 'LIKE', '%' . $request->query('search') . '%')
+            ->orWhere('caption', 'LIKE', '%' . $request->query('search') . '%')
+            ->orWhereHas('user', function ($query) use ($request) {
+                $query->where('username', 'LIKE', '%' . $request->query('search') . '%');
+            })
+            ->withCount('comments')
+            ->orderByDesc('published_at')
+            ->paginate(12);
 
         return view(
             'posts.index',
@@ -55,9 +64,49 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        // On récupère les commentaires de l'article, avec les utilisateurs associés (via la relation)
+        // On les trie par date de création (le plus ancien en premier)
+        $comments = $post
+            ->comments()
+            ->with('user')
+            ->orderBy('created_at')
+            ->get();
+
         return view('posts.show', [
             'post' => $post,
+            'comments' => $comments,
         ]);
+    }
+
+    public function addComment(Request $request, Post $post)
+    {
+        // On vérifie que l'utilisateur est authentifié
+        $request->validate([
+            'body' => 'required|string|max:2000',
+        ]);
+
+        // On crée le commentaire
+        $comment = $post->comments()->make();
+        // On remplit les données
+        $comment->body = strip_tags($request->input('body'));
+        $comment->user_id = auth()->user()->id;
+        // On sauvegarde le commentaire
+        $comment->save();
+
+        // On redirige vers la page de l'article
+        return redirect()->back();
+    }
+
+    public function deleteComment(Post $post, Comment $comment)
+    {
+        // On vérifie que l'utilisateur à le droit de supprimer le commentaire
+        $this->authorize('delete', $comment);
+
+        // On supprime le commentaire
+        $comment->delete();
+
+        // On redirige vers la page de l'article
+        return redirect()->back();
     }
 
     /**

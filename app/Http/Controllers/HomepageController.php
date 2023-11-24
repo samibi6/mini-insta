@@ -7,12 +7,8 @@ use Illuminate\Http\Request;
 
 class HomepageController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::paginate(12);
-
-        return view('homepage.index', [
-            'posts' => $posts,
-        ]);
+        return view('homepage.index');
     }
 }

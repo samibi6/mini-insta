@@ -16,9 +16,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HomepageController::class, 'index']);
+Route::get('/', [HomepageController::class, 'index'])->name('homepage.index');
+// Route::get('/', [HomepageController::class, 'index'])->name('homepage.index');
 Route::middleware(['auth'])->group(function () {
     Route::resource('posts', PostController::class);
+});
+// Gestion des commentaires, uniquement pour les utilisateurs authentifiés
+Route::middleware('auth')->group(function () {
+    // Ajout d'un commentaire
+    Route::post('/posts/{post}/comments', [PostController::class, 'addComment'])->name('posts.comments.add');
+    // Suppression d'un commentaire
+    Route::delete('/posts/{post}/comments/{comment}', [PostController::class, 'deleteComment'])->name('posts.comments.delete');
 });
 
 Route::get('/dashboard', function () {

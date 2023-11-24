@@ -7,8 +7,14 @@
         <div class="uppercase font-bold text-gray-800">
             {{ $post->caption }}
         </div>
-        <div class="text-xs text-gray-500">
-            {{ $post->published_at }}
+        <div class="flex justify-between items-center">
+            <div class="text-xs text-gray-500">
+                {{ $post->published_at }}
+            </div>
+            <div class="flex items-center space-x-2">
+                <x-heroicon-o-chat-bubble-bottom-center-text class="h-5 w-5 text-gray-500" />
+                <div class="text-sm text-gray-500">{{ $post->comments_count }}</div>
+            </div>
         </div>
     </a>
 </div>
