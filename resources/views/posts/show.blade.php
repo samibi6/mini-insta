@@ -19,6 +19,15 @@
             </div>
         </div>
     </div>
+    <form action="{{ route('posts.likes', $post) }}" method="POST" class="flex bg-white rounded-md shadow p-4">
+        @csrf
+        <div class="text-gray-700 mt-2 flex justify-end">
+            <button type="submit" class="font-bold bg-white text-gray-700 px-4 py-2 rounded shadow">
+                {{ $likeCount ? 1 : 0 }}
+            </button>
+        </div>
+        </div>
+    </form>
     <div class="mt-8">
         <h2 class="font-bold text-xl mb-4">Commentaires</h2>
 

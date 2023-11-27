@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostStoreRequest;
 use App\Models\Comment;
+use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -72,9 +73,22 @@ class PostController extends Controller
             ->orderBy('created_at')
             ->get();
 
+        $likes = $post
+            ->likes()
+            ->with('user')
+            ->orderBy('created_at')
+            ->get();
+
+        $likeCount = Like::query()
+            ->where('user_id', Auth::id())
+            ->where('post_id', $post->id)
+            ->count();
+
         return view('posts.show', [
             'post' => $post,
             'comments' => $comments,
+            'likes' => $likes,
+            'likeCount' => $likeCount,
         ]);
     }
 
@@ -106,6 +120,28 @@ class PostController extends Controller
         $comment->delete();
 
         // On redirige vers la page de l'article
+        return redirect()->back();
+    }
+
+    public function like(Request $request, Post $post)
+    {
+        $likeCount = Like::query()
+            ->where('user_id', Auth::id())
+            ->where('post_id', $post->id)
+            ->count();
+        if ($likeCount === 0) {
+            $like = new Like();
+            $like->user_id = Auth::id();
+            $like->post_id = $post->id;
+            $like->save();
+        } else {
+            $like = Like::query()
+                ->where('user_id', Auth::id())
+                ->where('post_id', $post->id)
+                ->first();
+            $like->delete();
+        };
+        // dd($likeCount);
         return redirect()->back();
     }
 

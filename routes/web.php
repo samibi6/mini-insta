@@ -27,6 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/posts/{post}/comments', [PostController::class, 'addComment'])->name('posts.comments.add');
     // Suppression d'un commentaire
     Route::delete('/posts/{post}/comments/{comment}', [PostController::class, 'deleteComment'])->name('posts.comments.delete');
+    // Ajout like
+    Route::post('/posts/{post}/likes', [PostController::class, 'like'])->name('posts.likes');
 });
 
 Route::get('/dashboard', function () {
