@@ -25,6 +25,7 @@ class PostController extends Controller
                 $query->where('username', 'LIKE', '%' . $request->query('search') . '%');
             })
             ->withCount('comments')
+            ->withCount('likes')
             ->orderByDesc('published_at')
             ->paginate(12);
 
@@ -84,11 +85,14 @@ class PostController extends Controller
             ->where('post_id', $post->id)
             ->count();
 
+        $totalLikes = $post->likes()->count();
+
         return view('posts.show', [
             'post' => $post,
             'comments' => $comments,
             'likes' => $likes,
             'likeCount' => $likeCount,
+            'totalLikes' => $totalLikes
         ]);
     }
 

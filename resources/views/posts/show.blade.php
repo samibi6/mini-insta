@@ -11,21 +11,27 @@
         <div>
             {!! \nl2br($post->caption) !!}
         </div>
-        <div class="flex mt-8">
+        <a class="flex mt-8 hover:-translate-y-1 transition
+    " href="{{ route('profile.show', $post->user) }}">
             <x-avatar class="h-20 w-20" :user="$post->user" />
             <div class="ml-4 flex flex-col justify-center">
                 <div class="text-gray-700">{{ $post->user->username }}</div>
                 <div class="text-gray-500">{{ $post->user->email }}</div>
             </div>
-        </div>
+        </a>
     </div>
     <form action="{{ route('posts.likes', $post) }}" method="POST" class="flex bg-white rounded-md shadow p-4">
         @csrf
         <div class="text-gray-700 mt-2 flex justify-end">
             <button type="submit" class="font-bold bg-white text-gray-700 px-4 py-2 rounded shadow">
-                {{ $likeCount ? 1 : 0 }}
+
+                @if ($likeCount == 1)
+                    <x-heroicon-s-heart class="h-6 w-6" />
+                @else
+                    <x-heroicon-o-heart class="h-6 w-6" />
+                @endif
+                {{ $totalLikes }}
             </button>
-        </div>
         </div>
     </form>
     <div class="mt-8">
@@ -34,14 +40,16 @@
         <div class="flex-col space-y-4">
             @forelse ($post->comments as $comment)
                 <div class="flex bg-white rounded-md shadow p-4 space-x-4">
-                    <div class="flex justify-start items-start h-full">
+                    <a class="flex justify-start items-start h-full" href="{{ route('profile.show', $comment->user) }}">
                         <x-avatar class="h-10 w-10" :user="$comment->user" />
-                    </div>
+                    </a>
                     <div class="flex flex-col justify-center w-full space-y-4">
                         <div class="flex justify-between">
                             <div class="flex space-x-4 items-center justify-center">
                                 <div class="flex flex-col justify-center">
-                                    <div class="text-gray-700">{{ $comment->user->name }}</div>
+                                    <a class="text-gray-700" href="{{ route('profile.show', $comment->user) }}">
+                                        {{ $comment->user->username }}
+                                    </a>
                                     <div class="text-gray-500 text-sm">
                                         {{ $comment->created_at->diffForHumans() }}
                                     </div>
