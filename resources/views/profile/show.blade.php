@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-app-layout>
     <div class="flex w-full">
         <x-avatar class="h-20 w-20" :user="$user" />
         <div class="ml-4 flex flex-col">
@@ -18,10 +18,15 @@
                         @else
                             <x-heroicon-o-user class="h-6 w-6" />
                         @endif
-                        {{ $totalFollows . ' - ' . $totalFollowers }}
                     </button>
                 </div>
             </form>
+        </div>
+        <div class="mx-auto">
+            <ul class="flex space-x-10 font-bold mt-4 text-lg">
+                <li>Followers: {{ $totalFollowers }}</li>
+                <li>Follows: {{ $totalFollows }}</li>
+            </ul>
         </div>
     </div>
     <div class="mt-8">
@@ -104,5 +109,28 @@
                 </div>
             </form>
         </x-modal>
+        <x-modal name="confirm-post-deletion" focusable>
+            <form method="post" onsubmit="event.target.action= '/posts/' + window.selected" class="p-6">
+                @csrf @method('DELETE')
+
+                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    Êtes-vous sûr de vouloir supprimer ce commentaire ?
+                </h2>
+
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    Cette action est irréversible. Toutes les données seront supprimées.
+                </p>
+
+                <div class="mt-6 flex justify-end">
+                    <x-secondary-button x-on:click="$dispatch('close')">
+                        Annuler
+                    </x-secondary-button>
+
+                    <x-danger-button class="ml-3" type="submit">
+                        Supprimer
+                    </x-danger-button>
+                </div>
+            </form>
+        </x-modal>
     </div>
-</x-guest-layout>
+</x-app-layout>

@@ -21,6 +21,6 @@
     </ul>
 
     <div class="mt-8">
-        {{ $posts->links() }}
+        {{ $posts->render() }}
     </div>
 </x-app-layout>

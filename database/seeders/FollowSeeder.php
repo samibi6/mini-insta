@@ -12,6 +12,6 @@ class FollowSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Follow::factory(300)->create();
+        \App\Models\Follow::factory(20)->create();
     }
 }

@@ -15,8 +15,14 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')">
+                    <x-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.index')">
                         {{ __('Posts') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('profile.show', Auth::user())" :active="request()->routeIs('profile.*')">
+                        {{ __('Mon Profil') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
+                        <x-heroicon-o-plus class="w-4 h-4 mr-2" />{{ __('Ajouter un post') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -42,7 +48,7 @@
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            {{ __('Paramètres') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -84,6 +90,12 @@
             <x-responsive-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')">
                 {{ __('Posts') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('profile.show', Auth::user())" :active="request()->routeIs('profile')">
+                {{ __('Mon Profil') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
+                {{ __('Ajouter un post') }}
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
@@ -95,7 +107,7 @@
 
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
+                    {{ __('Paramètres') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->

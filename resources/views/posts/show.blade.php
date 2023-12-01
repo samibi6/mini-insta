@@ -131,5 +131,6 @@
                 </div>
             </form>
         </x-modal>
+
     </div>
 </x-app-layout>

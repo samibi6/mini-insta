@@ -7,35 +7,160 @@ use App\Http\Requests\PostStoreRequest;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+
 
 class PostController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     $posts =
+    //         Post::where('published_at', '<', now())
+    //         // ->where('body', 'LIKE', '%' . $request->query('search') . '%')
+    //         ->orWhere('caption', 'LIKE', '%' . $request->query('search') . '%')
+    //         ->orWhereHas('user', function ($query) use ($request) {
+    //             $query->where('username', 'LIKE', '%' . $request->query('search') . '%');
+    //         })
+    //         ->withCount('comments')
+    //         ->withCount('likes')
+    //         ->orderByDesc('published_at')
+    //         ->paginate(12);
+
+    //     return view(
+    //         'posts.index',
+    //         [
+    //             'posts' => $posts,
+    //         ]
+    //     );
+    // }
+
+    // public function index(Request $request)
+    // {
+    //     $user = Auth::user();
+
+    //     // Récupérer les IDs des utilisateurs suivis
+    //     $usersFollowed = $user->followed()->pluck('otherUser_id');
+
+    //     // Récupérer tous les posts des utilisateurs suivis postés il y a maximum une semaine et les trier par date
+    //     $postsFromFollowedUsers = Post::whereHas('user', function ($query) use ($usersFollowed) {
+    //         $query->whereIn('id', $usersFollowed);
+    //     })
+    //         ->where('published_at', '>=', now()->subWeek())
+    //         ->orderByDesc('published_at')
+    //         ->withCount('comments')
+    //         ->withCount('likes');
+
+    //     // Récupérer tous les posts (même ceux des utilisateurs non suivis) et les trier par nombre de likes
+    //     $allPosts = Post::select('posts.*')
+    //         ->leftJoin('likes', 'likes.post_id', '=', 'posts.id')
+    //         ->where('posts.published_at', '>=', now()->subWeek())
+    //         ->where(function ($query) use ($request) {
+    //             $query->where('caption', 'LIKE', '%' . $request->query('search') . '%')
+    //                 ->orWhereHas('user', function ($query) use ($request) {
+    //                     $query->where('username', 'LIKE', '%' . $request->query('search') . '%');
+    //                 });
+    //         })
+    //         ->withCount('comments')
+    //         ->withCount('likes')
+    //         ->groupBy('posts.id')
+    //         ->orderByRaw('COUNT(likes.id) DESC');
+
+    //     $paginatedPosts = $postsFromFollowedUsers->union($allPosts)->paginate(12);
+
+    //     return view('posts.index', [
+    //         'posts' => $paginatedPosts,
+    //     ]);
+    // }
+
     public function index(Request $request)
     {
-        $posts =
-            Post::where('published_at', '<', now())
-            // ->where('body', 'LIKE', '%' . $request->query('search') . '%')
-            ->orWhere('caption', 'LIKE', '%' . $request->query('search') . '%')
-            ->orWhereHas('user', function ($query) use ($request) {
-                $query->where('username', 'LIKE', '%' . $request->query('search') . '%');
-            })
+        $user = Auth::user();
+
+        // Récupérer les IDs des utilisateurs suivis
+        $usersFollowed = $user->followed()->pluck('otherUser_id');
+
+        // Récupérer tous les posts des utilisateurs suivis postés il y a maximum une semaine et les trier par date
+        $postsFromFollowedUsers = Post::whereHas('user', function ($query) use ($usersFollowed) {
+            $query->whereIn('id', $usersFollowed);
+        })
+            ->where('published_at', '>=', now()->subWeek())
+            ->orderByDesc('published_at')
+            ->withCount('comments')
+            ->withCount('likes');
+
+        // Récupérer tous les posts (même ceux des utilisateurs non suivis) et les trier par nombre de likes
+        $allPosts = Post::select('posts.*')
+            ->leftJoin('likes', 'likes.post_id', '=', 'posts.id')
+            ->where('posts.published_at', '>=', now()->subWeek())
             ->withCount('comments')
             ->withCount('likes')
-            ->orderByDesc('published_at')
-            ->paginate(12);
+            ->groupBy('posts.id')
+            ->orderByRaw('COUNT(likes.id) DESC');
 
-        return view(
-            'posts.index',
-            [
-                'posts' => $posts,
-            ]
-        );
+        // Si une recherche est effectuée, appliquer la recherche à tous les posts, utilisateurs et légendes
+        if ($request->query('search')) {
+            $postsFromFollowedUsers->where(function ($query) use ($request) {
+                $query->where('caption', 'LIKE', '%' . $request->query('search') . '%')
+                    ->orWhereHas('user', function ($query) use ($request) {
+                        $query->where('username', 'LIKE', '%' . $request->query('search') . '%');
+                    });
+            });
+
+            $allPosts->where(function ($query) use ($request) {
+                $query->where('caption', 'LIKE', '%' . $request->query('search') . '%')
+                    ->orWhereHas('user', function ($query) use ($request) {
+                        $query->where('username', 'LIKE', '%' . $request->query('search') . '%');
+                    });
+            });
+        }
+
+        $paginatedPosts = $postsFromFollowedUsers->union($allPosts)->paginate(12);
+
+        return view('posts.index', [
+            'posts' => $paginatedPosts,
+        ]);
     }
+
+
+    // public function index(Request $request)
+    // {
+    //     $user = Auth::user();
+
+    //     // Récupérer les IDs des utilisateurs suivis
+    //     $usersFollowed = $user->follow()->pluck('otherUser_id');
+
+    //     $posts = Post::where(function ($query) use ($request, $usersFollowed) {
+    //         $query->where('published_at', '>=', now()->subWeek())
+    //             ->whereIn('user_id', $usersFollowed);
+    //     })
+    //         ->where(function ($query) use ($request) {
+    //             $query->where('caption', 'LIKE', '%' . $request->query('search') . '%')
+    //                 ->orWhereHas('user', function ($query) use ($request) {
+    //                     $query->where('username', 'LIKE', '%' . $request->query('search') . '%');
+    //                 });
+    //         })
+    //         ->withCount('comments')
+    //         ->withCount('likes')
+    //         ->orderByDesc('published_at')
+    //         ->paginate(12);
+
+    //     return view('posts.index', [
+    //         'posts' => $posts,
+    //     ]);
+    // }
+
+
+
+
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -170,6 +295,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        $this->authorize('delete', $post);
+
         $post->delete();
 
         return redirect()->back();
