@@ -29,7 +29,7 @@
                 <div>
                     <x-input-label for="published_at" :value="__('Date de publication')" />
                     <x-text-input id="published_at" class="block mt-1 w-full" type="date" name="published_at"
-                        :value="old('published_at')" />
+                        value="{{ date('Y-m-d') }}" />
                     <x-input-error :messages="$errors->get('published_at')" class="mt-2" />
                 </div>
 

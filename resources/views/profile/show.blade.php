@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="flex w-full">
+    <div class="flex w-full bg-zinc-300 rounded-lg p-5">
         <x-avatar class="h-20 w-20" :user="$user" />
         <div class="ml-4 flex flex-col">
             <div class="text-gray-800 font-bold">{{ $user->username }}</div>
@@ -8,18 +8,21 @@
             <div class="text-gray-500 text-xs">
                 Membre depuis {{ $user->created_at->diffForHumans() }}
             </div>
-            <form action="{{ route('profile.follow', $user) }}" method="POST" class="flex bg-white rounded-md shadow p-4">
+            <form action="{{ route('profile.follow', $user) }}" method="POST" class="flex bg-white rounded-md">
                 @csrf
-                <div class="text-gray-700 mt-2 flex justify-end">
-                    <button type="submit" class="font-bold bg-white text-gray-700 px-4 py-2 rounded shadow">
 
-                        @if ($followCount == 1)
-                            <x-heroicon-s-user class="h-6 w-6" />
-                        @else
-                            <x-heroicon-o-user class="h-6 w-6" />
-                        @endif
-                    </button>
-                </div>
+                <button type="submit"
+                    class="font-bold bg-blue-500 text-gray-700 px-4 py-2 rounded shadow w-full flex text-white hover:bg-blue-800 transition">
+
+                    @if ($followCount == 1)
+                        <x-heroicon-s-user class="h-6 w-6 mr-5" />
+                        <p class="inline">Ne plus suivre</p>
+                    @else
+                        <x-heroicon-o-user class="h-6 w-6 mr-5" />
+                        <p class="inline">Suivre</p>
+                    @endif
+                </button>
+
             </form>
         </div>
         <div class="mx-auto">
