@@ -1,9 +1,9 @@
 <div class="bg-white rounded-md shadow-md hover:shadow-lg hover:scale-105 transition">
-    <a class="p-2 rounded bg-zinc-100 flex mt-8 hover:-translate-y-1 hover:underline transition
+    <a class="p-2 pl-5 rounded-md bg-white flex hover:-translate-y-1 hover:underline hover:bg-zinc-300 transition
     "
         href="{{ route('profile.show', $post->user) }}">
         <x-avatar class="h-5 w-5" :user="$post->user" />
-        <div class="ml-4 flex flex-col justify-center">
+        <div class="ml-2 flex flex-col justify-center">
             <div class="text-gray-700">{{ $post->user->username }}</div>
         </div>
     </a>
