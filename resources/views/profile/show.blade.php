@@ -12,7 +12,7 @@
                 @csrf
 
                 <button type="submit"
-                    class="font-bold bg-blue-500 text-gray-700 px-4 py-2 rounded shadow w-full flex text-white hover:bg-blue-800 transition">
+                    class="font-bold bg-blue-500 px-4 py-2 rounded shadow w-full flex text-white hover:bg-blue-800 transition">
 
                     @if ($followCount == 1)
                         <x-heroicon-s-user class="h-6 w-6 mr-5" />
