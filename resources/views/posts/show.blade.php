@@ -1,24 +1,26 @@
 <x-app-layout>
     <div class="m-auto w-1/2">
-        <a class="my-4" href="{{ route('posts.index') }}">Retour</a>
-        <h1 class="font-bold text-xl mb-4">{{ $post->caption }}</h1>
-        <div>
-            <img class="object-cover w-full" src="{{ Storage::url($post->img_path) }}" alt="">
-        </div>
-        <div class="mb-4 text-xs text-gray-500">
-            {{ $post->published_at }}
-        </div>
-        <div>
-            {!! \nl2br($post->caption) !!}
-        </div>
-        <a class="flex mt-8 hover:-translate-y-1 transition
-    " href="{{ route('profile.show', $post->user) }}">
+        <a class="inline-block my-4 text-white bg-blue-500 px-6 py-2 rounded hover:bg-blue-800 transition"
+            href="{{ route('posts.index') }}">Retour</a>
+        <a class="bg-zinc-300 p-4 rounded flex mb-5 hover:-translate-y-1 transition
+    "
+            href="{{ route('profile.show', $post->user) }}">
             <x-avatar class="h-20 w-20" :user="$post->user" />
             <div class="ml-4 flex flex-col justify-center">
                 <div class="text-gray-700">{{ $post->user->username }}</div>
                 <div class="text-gray-500">{{ $post->user->email }}</div>
             </div>
         </a>
+        <div>
+            <img class="object-cover w-full" src="{{ Storage::url($post->img_path) }}" alt="">
+        </div>
+        <div class="mb-4 text-xs text-gray-500">
+            {{ $post->published_at }}
+        </div>
+        <div class="text-xl font-bold mb-5">
+            {!! \nl2br($post->caption) !!}
+        </div>
+
     </div>
     <form action="{{ route('posts.likes', $post) }}" method="POST" class="flex bg-white rounded-md shadow p-4">
         @csrf

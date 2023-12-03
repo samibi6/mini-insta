@@ -1,6 +1,13 @@
-<div>
-    <a class="flex flex-col h-full space-y-4 bg-white rounded-md shadow-md p-5 w-full hover:shadow-lg hover:scale-105 transition"
-        href="{{ route('posts.show', $post) }}">
+<div class="bg-white rounded-md shadow-md hover:shadow-lg hover:scale-105 transition">
+    <a class="p-2 rounded bg-zinc-100 flex mt-8 hover:-translate-y-1 hover:underline transition
+    "
+        href="{{ route('profile.show', $post->user) }}">
+        <x-avatar class="h-5 w-5" :user="$post->user" />
+        <div class="ml-4 flex flex-col justify-center">
+            <div class="text-gray-700">{{ $post->user->username }}</div>
+        </div>
+    </a>
+    <a class="flex flex-col h-full space-y-4 p-5 pt-0 w-full" href="{{ route('posts.show', $post) }}">
         <div>
             <img class="object-cover  w-full h-52" src="{{ Storage::url($post->img_path) }}" alt="">
         </div>
